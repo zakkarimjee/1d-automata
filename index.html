@@ -6,7 +6,7 @@
 </head>
 <body style="font-family: 'Open Sans', sans-serif;">
 <h1>1D Cellular Automata</h1>
-<p id="rn">Rule no. <input id="rule_input" name="rule-picker" type="number" min="0" max="255" step="1"/></p>
+<p id="rn">Rule no. <input id="rule_input" name="rule-picker" type="number" min="0" max="255" step="1"/><button id="rand">Randomise</button></p>
 <canvas id="cnv" width="1000" height="500"></canvas>
 <script>
 window.onload = function(){
@@ -19,17 +19,25 @@ window.onload = function(){
     const cell_scale = canvas.width/cells_across;
     const cells_down = canvas.height/cell_scale;
     var rulenum = Math.floor(255*Math.random())
-    const rule = get_rule(rulenum);
-    draw_rule(context, rule, cell_scale, cells_across, cells_down)
+    draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down)
+    
     const rule_input = document.getElementById("rule_input")
     rule_input.valueAsNumber = rulenum
-
     rule_input.addEventListener('change',(event)=>{
         rulenum = rule_input.valueAsNumber
-        const newrule = get_rule(rulenum)
         context.setTransform(1,0,0,1,0,0)
-        draw_rule(context, newrule, cell_scale, cells_across, cells_down) 
+        draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down) 
     })
+
+    const random_button = document.getElementById("rand")
+    random_button.addEventListener('click',(event)=>{
+        rulenum = Math.floor(255*Math.random())
+        rule_input.valueAsNumber = rulenum
+        context.setTransform(1,0,0,1,0,0)
+        draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down) 
+    }
+    )
+
 
 };
 
