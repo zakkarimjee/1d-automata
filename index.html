@@ -1,93 +1,96 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>1D Cellular Automata</title>
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300&display=swap" rel="stylesheet">
+    <title>1D Cellular Automata</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300&display=swap" rel="stylesheet">
 </head>
+
 <body style="font-family: 'Open Sans', sans-serif;">
-<h1>1D Cellular Automata</h1>
-<p id="rn">Rule no. <input id="rule_input" name="rule-picker" type="number" min="0" max="255" step="1"/><button id="rand">Randomise</button></p>
-<canvas id="cnv" width="1000" height="500"></canvas>
-<script>
-window.onload = function(){
-    const canvas = document.getElementById("cnv")
-    canvas.width = 1000;
-    canvas.height = 500;
-    this.document.body.appendChild(canvas);
-    const context = canvas.getContext('2d');
-    const cells_across = 100;
-    const cell_scale = canvas.width/cells_across;
-    const cells_down = canvas.height/cell_scale;
-    var rulenum = Math.floor(255*Math.random())
-    draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down)
-    
-    const rule_input = document.getElementById("rule_input")
-    rule_input.valueAsNumber = rulenum
-    rule_input.addEventListener('change',(event)=>{
-        rulenum = rule_input.valueAsNumber
-        context.setTransform(1,0,0,1,0,0)
-        draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down) 
-    })
+    <h1>1D Cellular Automata</h1>
+    <p id="rn">Rule no. <input id="rule_input" name="rule-picker" type="number" min="0" max="255" step="1" /><button
+            id="rand">Randomise</button>Copied from <a href="https://javascript.christmas/2019/22">here</p>
+    <canvas id="cnv" width="1000" height="500"></canvas>
+    <script>
+        window.onload = function () {
+            const canvas = document.getElementById("cnv")
+            canvas.width = 1000;
+            canvas.height = 500;
+            this.document.body.appendChild(canvas);
+            const context = canvas.getContext('2d');
+            const cells_across = 100;
+            const cell_scale = canvas.width / cells_across;
+            const cells_down = canvas.height / cell_scale;
+            var rulenum = Math.floor(255 * Math.random())
+            draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down)
 
-    const random_button = document.getElementById("rand")
-    random_button.addEventListener('click',(event)=>{
-        rulenum = Math.floor(255*Math.random())
-        rule_input.valueAsNumber = rulenum
-        context.setTransform(1,0,0,1,0,0)
-        draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down) 
-    }
-    )
+            const rule_input = document.getElementById("rule_input")
+            rule_input.valueAsNumber = rulenum
+            rule_input.addEventListener('change', (event) => {
+                rulenum = rule_input.valueAsNumber
+                context.setTransform(1, 0, 0, 1, 0, 0)
+                draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down)
+            })
 
-
-};
-
-var c_on = '#f6ad7b';
-var c_off = '#f2eee5';
-
-const combine = (b1,b2,b3) => (b1 << 2) + (b2 << 1) + (b3 << 0);
-
-const get_bit = (num,pos) => (num >> pos) & 1;
-
-const get_rule = num => (b1, b2, b3) => get_bit(num, combine(b1,b2,b3));
-
-function draw_rule(ctx, rule, scale, width, height){
-    let row = initial_row(width)
-    for (let i=0; i < height; i++){
-        draw_row(ctx,row,scale);
-        row = next_row(row, rule)
-    }
-}
-
-function initial_row(length){
-    const initial_row = Array(length).fill(0);
-    initial_row[Math.floor(length/2)] = 1;
-    return initial_row;
-}
-
-const next_row = (row, rule) => row.map((_,i) => rule(row[i-1],row[i],row[i+1]));
-
-function draw_row(ctx, row, scale){
-    ctx.save()
-    row.forEach(cell => {
-        ctx.fillStyle = cell == 1 ? c_on : c_off;
-        ctx.fillRect(0,0,scale,scale);
-        ctx.translate(scale,0);
-    });
-    ctx.restore()
-    ctx.translate(0,scale);
-
-}
+            const random_button = document.getElementById("rand")
+            random_button.addEventListener('click', (event) => {
+                rulenum = Math.floor(255 * Math.random())
+                rule_input.valueAsNumber = rulenum
+                context.setTransform(1, 0, 0, 1, 0, 0)
+                draw_rule(context, get_rule(rulenum), cell_scale, cells_across, cells_down)
+            }
+            )
 
 
-function draw_border(ctx,cvs,thickness){
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0,0,cvs.width,cvs.height);
-    ctx.fillStyle = '#FFF';
-    ctx.fillRect(thickness,thickness,cvs.width-2*thickness,cvs.height-2*thickness);
-};
+        };
+
+        var c_on = '#f6ad7b';
+        var c_off = '#f2eee5';
+
+        const combine = (b1, b2, b3) => (b1 << 2) + (b2 << 1) + (b3 << 0);
+
+        const get_bit = (num, pos) => (num >> pos) & 1;
+
+        const get_rule = num => (b1, b2, b3) => get_bit(num, combine(b1, b2, b3));
+
+        function draw_rule(ctx, rule, scale, width, height) {
+            let row = initial_row(width)
+            for (let i = 0; i < height; i++) {
+                draw_row(ctx, row, scale);
+                row = next_row(row, rule)
+            }
+        }
+
+        function initial_row(length) {
+            const initial_row = Array(length).fill(0);
+            initial_row[Math.floor(length / 2)] = 1;
+            return initial_row;
+        }
+
+        const next_row = (row, rule) => row.map((_, i) => rule(row[i - 1], row[i], row[i + 1]));
+
+        function draw_row(ctx, row, scale) {
+            ctx.save()
+            row.forEach(cell => {
+                ctx.fillStyle = cell == 1 ? c_on : c_off;
+                ctx.fillRect(0, 0, scale, scale);
+                ctx.translate(scale, 0);
+            });
+            ctx.restore()
+            ctx.translate(0, scale);
+
+        }
 
 
-</script>
-<p>Refresh for a random rule. Copied from <a href="https://javascript.christmas/2019/22">here</a></p>
+        function draw_border(ctx, cvs, thickness) {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, cvs.width, cvs.height);
+            ctx.fillStyle = '#FFF';
+            ctx.fillRect(thickness, thickness, cvs.width - 2 * thickness, cvs.height - 2 * thickness);
+        };
+
+
+    </script>
 </body>
+
 </html>
